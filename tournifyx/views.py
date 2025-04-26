@@ -35,7 +35,7 @@ def login(request):
 
         if user is not None:
             auth_login(request, user)
-            messages.success(request, 'Login successful!')
+            messages.success(request, '')
             return redirect('home')
         else:
             messages.error(request, 'Invalid username or password!')
