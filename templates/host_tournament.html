@@ -41,6 +41,25 @@
         {% endif %}
       </div>
 
+      <!-- Number of Participants -->
+      <div>
+        <label for="id_num_participants" class="block text-sm font-medium mb-1">Number of Participants</label>
+        {{ form.num_participants|add_class:"w-full p-2 rounded bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-orange-500" }}
+        {% if form.num_participants.errors %}
+          <p class="text-red-400 text-sm mt-1">{{ form.num_participants.errors }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Match Type -->
+      <div>
+        <label for="id_match_type" class="block text-sm font-medium mb-1">Match Type</label>
+        {{ form.match_type|add_class:"w-full p-2 rounded bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-orange-500" }}
+        <p class="text-gray-300 text-xs mt-1">Choose between a Knockout or League system.</p>
+        {% if form.match_type.errors %}
+          <p class="text-red-400 text-sm mt-1">{{ form.match_type.errors }}</p>
+        {% endif %}
+      </div>
+
       <!-- Description -->
       <div>
         <label for="id_description" class="block text-sm font-medium mb-1">Description</label>
