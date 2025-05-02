@@ -26,4 +26,6 @@ urlpatterns = [
     path('logout/', logout, name='logout'),
     path('admin/', admin.site.urls),
     path('host-tournament/', views.host_tournament, name='host_tournament'),
+    path('join-tournament/', views.join_tournament, name='join_tournament'),
+    path('tournament/<int:tournament_id>/dashboard/', views.tournament_dashboard, name='tournament_dashboard'),
 ]

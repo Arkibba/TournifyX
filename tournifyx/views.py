@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import *
 from django.contrib.auth.decorators import login_required
-from .forms import TournamentForm
+from .forms import TournamentForm, JoinTournamentForm
 import secrets
 import string
 import random
@@ -96,6 +96,39 @@ def host_tournament(request):
         form = TournamentForm()
 
     return render(request, 'host_tournament.html', {'form': form})
+
+
+def join_tournament(request):
+    if request.method == 'POST':
+        form = JoinTournamentForm(request.POST)
+        if form.is_valid():
+            code = form.cleaned_data['code']
+            try:
+                tournament = Tournament.objects.get(code=code)
+                user_profile = UserProfile.objects.get(user=request.user)
+                
+                # Check if the user is already in the tournament
+                if TournamentParticipant.objects.filter(user_profile=user_profile, tournament=tournament).exists():
+                    messages.warning(request, "You have already joined this tournament.")
+                else:
+                    # Add the user to the tournament
+                    TournamentParticipant.objects.create(user_profile=user_profile, tournament=tournament)
+                    messages.success(request, f"You have successfully joined the tournament: {tournament.name}")
+                return redirect('tournament_dashboard', tournament_id=tournament.id)
+            except Tournament.DoesNotExist:
+                messages.error(request, "Invalid tournament code.")
+    else:
+        form = JoinTournamentForm()
+    return render(request, 'join_tournament.html', {'form': form})
+
+
+def tournament_dashboard(request, tournament_id):
+    tournament = get_object_or_404(Tournament, id=tournament_id)
+    participants = TournamentParticipant.objects.filter(tournament=tournament)
+    return render(request, 'tournament_dashboard.html', {
+        'tournament': tournament,
+        'participants': participants,
+    })
 
 
 

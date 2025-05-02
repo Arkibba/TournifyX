@@ -11,3 +11,6 @@ class TournamentForm(forms.ModelForm):
             'category': forms.Select(attrs={'class': 'form-control'}),
             'match_type': forms.Select(attrs={'class': 'form-control'}),
         }
+
+class JoinTournamentForm(forms.Form):
+    code = forms.CharField(max_length=20, label="Tournament Code", widget=forms.TextInput(attrs={'class': 'form-control'}))
