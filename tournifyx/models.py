@@ -1,7 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     joined_tournaments = models.ManyToManyField('Tournament', through='TournamentParticipant')
@@ -17,18 +16,31 @@ class HostProfile(models.Model):
     def __str__(self):
         return f"Host: {self.user.username}"
 
+
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
+
 class Tournament(models.Model):
+    CATEGORY_CHOICES = [
+        ('sports', 'Sports'),
+        ('esports', 'Esports'),
+        ('quiz', 'Quiz'),
+    ]
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     created_by = models.ForeignKey(HostProfile, on_delete=models.CASCADE)
     code = models.CharField(max_length=20, unique=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    category = models.CharField(max_length=10, choices=CATEGORY_CHOICES)
 
     def __str__(self):
         return self.name
 
-# Intermediate model for users joining tournaments
 class TournamentParticipant(models.Model):
     user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
@@ -68,3 +80,4 @@ class Match(models.Model):
 
     def __str__(self):
         return f"{self.player1.name} vs {self.player2.name} ({self.stage})"
+

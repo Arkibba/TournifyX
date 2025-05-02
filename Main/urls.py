@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from tournifyx import views
 from tournifyx.views import *
 
 urlpatterns = [
@@ -24,4 +25,5 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('logout/', logout, name='logout'),
     path('admin/', admin.site.urls),
+    path('host-tournament/', views.host_tournament, name='host_tournament'),
 ]
