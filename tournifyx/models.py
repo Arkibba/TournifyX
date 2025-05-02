@@ -68,10 +68,10 @@ class TournamentParticipant(models.Model):
 class Player(models.Model):
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    team_name = models.CharField(max_length=100, blank=True)
+    team_name = models.CharField(max_length=100, null=True, blank=True)  # Make this optional
     added_by = models.ForeignKey(HostProfile, on_delete=models.SET_NULL, null=True)
 
-    def _str_(self):
+    def __str__(self):
         return f"{self.name} - {self.tournament.name}"
 
 

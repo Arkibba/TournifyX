@@ -4,10 +4,23 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import *
 from django.contrib.auth.decorators import login_required
-from .forms import TournamentForm, JoinTournamentForm
+from .forms import TournamentForm, JoinTournamentForm, PlayerForm
 import secrets
 import string
 import random
+from .utils import generate_knockout_fixtures, generate_league_fixtures
+import itertools
+
+def generate_knockout_fixtures(players):
+    random.shuffle(players)
+    fixtures = []
+    while len(players) > 1:
+        fixtures.append((players.pop(), players.pop()))
+    return fixtures
+
+def generate_league_fixtures(players):
+    fixtures = list(itertools.combinations(players, 2))
+    return fixtures
 
 # Views
 def home(request):
@@ -72,16 +85,18 @@ def host_tournament(request):
     try:
         host_profile = HostProfile.objects.get(user=request.user)
     except HostProfile.DoesNotExist:
-
         host_profile = HostProfile.objects.create(user=request.user)
+
+    tournaments = Tournament.objects.filter(created_by=host_profile)
 
     if request.method == 'POST':
         form = TournamentForm(request.POST)
+
         if form.is_valid():
             tournament = form.save(commit=False)
-
             tournament.created_by = host_profile
 
+            # Generate a unique tournament code
             code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
             while Tournament.objects.filter(code=code).exists():
                 code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
@@ -89,13 +104,34 @@ def host_tournament(request):
             tournament.code = code
             tournament.save()
 
-            messages.success(request,
-                             f"Tournament '{tournament.name}' created successfully! Players can join with code: {tournament.code}")
-            return redirect('home',)
+            # Add players to the tournament
+            player_names = form.cleaned_data['players'].splitlines()
+            if len(player_names) > tournament.num_participants:
+                messages.error(request, f"Player limit exceeded! Maximum allowed: {tournament.num_participants}.")
+                tournament.delete()  # Rollback tournament creation
+                return redirect('host_tournament')
+
+            for name in player_names:
+                if name.strip():  # Ignore empty lines
+                    Player.objects.create(
+                        tournament=tournament,
+                        name=name.strip(),
+                        added_by=host_profile
+                    )
+
+            messages.success(
+                request,
+                f"Tournament '{tournament.name}' created successfully with {len(player_names)} players! Players can join with code: {tournament.code}"
+            )
+            return redirect('host_tournament')
+
     else:
         form = TournamentForm()
 
-    return render(request, 'host_tournament.html', {'form': form})
+    return render(request, 'host_tournament.html', {
+        'form': form,
+        'tournaments': tournaments,
+    })
 
 
 def join_tournament(request):
@@ -106,7 +142,12 @@ def join_tournament(request):
             try:
                 tournament = Tournament.objects.get(code=code)
                 user_profile = UserProfile.objects.get(user=request.user)
-                
+
+                # Check if the tournament is full
+                if TournamentParticipant.objects.filter(tournament=tournament).count() >= tournament.num_participants:
+                    messages.error(request, "This tournament is already full.")
+                    return redirect('join_tournament')
+
                 # Check if the user is already in the tournament
                 if TournamentParticipant.objects.filter(user_profile=user_profile, tournament=tournament).exists():
                     messages.warning(request, "You have already joined this tournament.")
@@ -124,10 +165,18 @@ def join_tournament(request):
 
 def tournament_dashboard(request, tournament_id):
     tournament = get_object_or_404(Tournament, id=tournament_id)
-    participants = TournamentParticipant.objects.filter(tournament=tournament)
+    participants = Player.objects.filter(tournament=tournament)
+    participant_names = [p.name for p in participants]
+
+    if tournament.match_type == 'knockout':
+        fixtures = generate_knockout_fixtures(participant_names)
+    else:  # League
+        fixtures = generate_league_fixtures(participant_names)
+
     return render(request, 'tournament_dashboard.html', {
         'tournament': tournament,
         'participants': participants,
+        'fixtures': fixtures,
     })
 
 

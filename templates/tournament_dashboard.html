@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto mt-8 p-6 bg-white shadow-md rounded-lg">
+<div class="max-w-4xl mx-auto mt-8 p-6 bg-white shadow-md rounded-lg text-black">
     <h1 class="text-3xl font-bold mb-4">{{ tournament.name }}</h1>
-    <p class="text-gray-700 mb-4">{{ tournament.description }}</p>
+    <p class="text-gray-800 mb-4">{{ tournament.description }}</p>
     <p><strong>Category:</strong> {{ tournament.get_category_display }}</p>
     <p><strong>Match Type:</strong> {{ tournament.get_match_type_display }}</p>
     <p><strong>Participants:</strong> {{ participants.count }}</p>
@@ -14,6 +14,13 @@
             <li>{{ participant.user_profile.user.username }}</li>
         {% empty %}
             <li>No participants yet.</li>
+        {% endfor %}
+    </ul>
+
+    <h2 class="text-2xl font-semibold mt-6">Fixtures</h2>
+    <ul class="list-disc pl-6">
+        {% for match in fixtures %}
+            <li>{{ match.0 }} vs {{ match.1 }}</li>
         {% endfor %}
     </ul>
 </div>
