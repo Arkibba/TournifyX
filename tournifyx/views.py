@@ -164,7 +164,7 @@ def tournament_dashboard(request, tournament_id):
 
     return render(request, 'tournament_dashboard.html', {
         'tournament': tournament,
-        'participants': participants,
+        'participants': participants,  # Pass participants to the template
         'fixtures': fixtures,
     })
 

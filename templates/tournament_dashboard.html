@@ -8,19 +8,25 @@
     <p><strong>Match Type:</strong> {{ tournament.get_match_type_display }}</p>
     <p><strong>Participants:</strong> {{ participants.count }}</p>
 
-    <h2 class="text-2xl font-semibold mt-6">Participants</h2>
-    <ul class="list-disc pl-6">
+    <h2 class="text-2xl font-bold mb-4">{{ tournament.name }} Dashboard</h2>
+
+    <!-- Participants Section -->
+    <h3 class="text-xl font-semibold mb-2">Participants</h3>
+    <ul class="list-disc pl-5">
         {% for participant in participants %}
-            <li>{{ participant.user_profile.user.username }}</li>
+            <li>{{ participant.name }}</li>
         {% empty %}
-            <li>No participants yet.</li>
+            <li>No participants have joined this tournament yet.</li>
         {% endfor %}
     </ul>
 
-    <h2 class="text-2xl font-semibold mt-6">Fixtures</h2>
-    <ul class="list-disc pl-6">
+    <!-- Fixtures Section -->
+    <h3 class="text-xl font-semibold mt-6 mb-2">Fixtures</h3>
+    <ul class="list-disc pl-5">
         {% for match in fixtures %}
             <li>{{ match.0 }} vs {{ match.1 }}</li>
+        {% empty %}
+            <li>No fixtures available yet.</li>
         {% endfor %}
     </ul>
 </div>
