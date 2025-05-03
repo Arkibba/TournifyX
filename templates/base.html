@@ -37,7 +37,7 @@
                 <a href="{% url 'home' %}" class="hover:underline">Home</a>
                 <a href="#" class="hover:underline">Tournaments</a>
                 <a href="#" class="hover:underline">About</a>
-                <a href="#" class="hover:underline">Contact</a>
+                
                 {% if user.is_authenticated %}
                     <a href="{% url 'logout' %}" class="hover:underline">Logout</a>
                 {% else %}
