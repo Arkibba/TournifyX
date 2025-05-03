@@ -13,6 +13,17 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex flex-col">
+
+    <!-- Background Video with Fallback and Overlay -->
+    <div class="fixed inset-0 -z-10 overflow-hidden">
+        <video id="background-video" autoplay muted loop playsinline class="absolute w-full h-full object-cover" poster="{% static 'images/fallback.jpg' %}">
+            <source src="{% static 'videos/bg2.mp4' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div id="fallback-image" class="absolute inset-0 bg-cover bg-center" style="background-image: url('{% static "images/fallback.jpg" %}');"></div>
+        <div class="absolute inset-0 bg-black bg-opacity-70 backdrop-blur-sm"></div>
+    </div>
+
     <header>
         <nav class="bg-black p-4 flex justify-between items-center">
             <!-- Logo + Brand -->
@@ -49,6 +60,16 @@
 
     <!-- Scripts -->
     <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        // JavaScript to handle video end event
+        const video = document.getElementById('background-video');
+        const fallbackImage = document.getElementById('fallback-image');
+
+        video.addEventListener('ended', () => {
+            video.classList.add('hidden'); // Hide the video
+            fallbackImage.classList.remove('hidden'); // Show the fallback image
+        });
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>
