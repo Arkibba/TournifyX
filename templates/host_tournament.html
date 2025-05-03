@@ -17,17 +17,46 @@
   </div>
 
   <!-- Form Card -->
-  <div class="w-full max-w-4xl bg-black bg-opacity-60 text-white rounded-2xl shadow-2xl p-8 backdrop-blur-md border border-white/10">
+  <div class="w-full max-w-4xl bg-black text-white rounded-2xl shadow-2xl p-8 backdrop-blur-md border border-gray-700">
     <h2 class="text-3xl font-bold mb-6 text-center">Host a New Tournament</h2>
 
     <form method="post" class="space-y-6">
       {% csrf_token %}
-      {{ form.as_p }}
+      
+      <!-- Customizing the 'name' field -->
+      <div>
+        {{ form.name.label_tag }}
+        {{ form.name|add_class:"w-full p-2 rounded bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-orange-500" }}
+      </div>
 
-      <!-- Info Note -->
-      <div class="bg-yellow-600/20 p-3 rounded text-sm border border-yellow-400/40 text-yellow-300">
-        <i class="fas fa-info-circle mr-2"></i>
-        A unique tournament code will be automatically generated for players to join with.
+      <!-- Customizing the 'description' field -->
+      <div>
+        {{ form.description.label_tag }}
+        {{ form.description|add_class:"w-full p-2 rounded bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-orange-500" }}
+      </div>
+
+      <!-- Customizing the 'category' field -->
+      <div>
+        {{ form.category.label_tag }}
+        {{ form.category|add_class:"w-full p-2 rounded bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-orange-500" }}
+      </div>
+
+      <!-- Customizing the 'num_participants' field -->
+      <div>
+        {{ form.num_participants.label_tag }}
+        {{ form.num_participants|add_class:"w-full p-2 rounded bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-orange-500" }}
+      </div>
+
+      <!-- Customizing the 'match_type' field -->
+      <div>
+        {{ form.match_type.label_tag }}
+        {{ form.match_type|add_class:"w-full p-2 rounded bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-orange-500" }}
+      </div>
+
+      <!-- Customizing the 'players' field -->
+      <div>
+        {{ form.players.label_tag }}
+        {{ form.players|add_class:"w-full p-2 rounded bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-orange-500" }}
       </div>
 
       <!-- Submit Button -->
@@ -40,7 +69,7 @@
   </div>
 
   <!-- Tournaments List -->
-  <div class="w-full max-w-4xl bg-black bg-opacity-60 text-white rounded-2xl shadow-2xl p-8 mt-10 backdrop-blur-md border border-white/10">
+  <div class="w-full max-w-4xl bg-black text-white rounded-2xl shadow-2xl p-8 mt-10 backdrop-blur-md border border-gray-700">
     <h2 class="text-2xl font-bold mb-4">Your Tournaments</h2>
     <ul class="space-y-2">
       {% for tournament in tournaments %}
