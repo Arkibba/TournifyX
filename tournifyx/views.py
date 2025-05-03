@@ -243,3 +243,12 @@ def update_tournament(request, tournament_id):
 
 
 
+def about(request):
+    """Render the About page."""
+    return render(request, 'about.html', {
+        'creators': [
+            'Md. Zubaer Islam',
+            'MD. Arkive',
+            'Shoshi Khan'
+        ]
+    })
