@@ -34,8 +34,6 @@
   </div>
 </div>
 
-{% endblock %}
-
 <!-- Modal -->
 {% if tournament_code %}
 <div id="successModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80">
@@ -58,9 +56,8 @@
     </div>
   </div>
 </div>
-
-
 {% endif %}
+
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const modal = document.getElementById('successModal');
@@ -72,7 +69,10 @@
           modal.style.display = 'none'; // Hide the modal
         });
       });
+    } else {
+      console.error('Modal not found in the DOM.');
     }
   });
 </script>
 
+{% endblock %}
