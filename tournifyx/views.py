@@ -139,25 +139,8 @@ def join_tournament(request):
         form = JoinTournamentForm(request.POST)
         if form.is_valid():
             code = form.cleaned_data['code']
-            try:
-                tournament = Tournament.objects.get(code=code)
-                user_profile = UserProfile.objects.get(user=request.user)
-
-                # Check if the tournament is full
-                if TournamentParticipant.objects.filter(tournament=tournament).count() >= tournament.num_participants:
-                    messages.error(request, "This tournament is already full.")
-                    return redirect('join_tournament')
-
-                # Check if the user is already in the tournament
-                if TournamentParticipant.objects.filter(user_profile=user_profile, tournament=tournament).exists():
-                    messages.warning(request, "You have already joined this tournament.")
-                else:
-                    # Add the user to the tournament
-                    TournamentParticipant.objects.create(user_profile=user_profile, tournament=tournament)
-                    messages.success(request, f"You have successfully joined the tournament: {tournament.name}")
-                return redirect('tournament_dashboard', tournament_id=tournament.id)
-            except Tournament.DoesNotExist:
-                messages.error(request, "Invalid tournament code.")
+            # Add logic to handle the tournament code
+            return redirect('tournament_dashboard')  # Replace with your desired redirect
     else:
         form = JoinTournamentForm()
     return render(request, 'join_tournament.html', {'form': form})
