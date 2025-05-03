@@ -88,6 +88,8 @@ def host_tournament(request):
         host_profile = HostProfile.objects.create(user=request.user)
 
     tournaments = Tournament.objects.filter(created_by=host_profile)
+    tournament_code = None
+    tournament = None  # Initialize the tournament variable
 
     if request.method == 'POST':
         form = TournamentForm(request.POST)
@@ -119,11 +121,17 @@ def host_tournament(request):
                         added_by=host_profile
                     )
 
+            tournament_code = tournament.code
             messages.success(
                 request,
-                f"Tournament '{tournament.name}' created successfully with {len(player_names)} players! Players can join with code: {tournament.code}"
+                f"Tournament '{tournament.name}' created successfully with {len(player_names)} players!"
             )
-            return redirect('host_tournament')
+        return render(request, 'host_tournament.html', {
+            'form': form,
+            'tournaments': tournaments,
+            'tournament_code': tournament_code,
+            'tournament': tournament,  # Pass the tournament object to the template
+        })
 
     else:
         form = TournamentForm()
@@ -131,6 +139,8 @@ def host_tournament(request):
     return render(request, 'host_tournament.html', {
         'form': form,
         'tournaments': tournaments,
+        'tournament_code': tournament_code,
+        'tournament': tournament,  # Pass the tournament object to the template
     })
 
 
