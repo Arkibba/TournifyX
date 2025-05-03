@@ -139,8 +139,14 @@ def join_tournament(request):
         form = JoinTournamentForm(request.POST)
         if form.is_valid():
             code = form.cleaned_data['code']
-            # Add logic to handle the tournament code
-            return redirect('tournament_dashboard')  # Replace with your desired redirect
+            try:
+                # Fetch the tournament using the code
+                tournament = Tournament.objects.get(code=code)
+                return redirect('tournament_dashboard', tournament_id=tournament.id)
+            except Tournament.DoesNotExist:
+                # If the tournament code is invalid
+                messages.error(request, 'Invalid tournament code!')
+                return render(request, 'join_tournament.html', {'form': form})
     else:
         form = JoinTournamentForm()
     return render(request, 'join_tournament.html', {'form': form})
