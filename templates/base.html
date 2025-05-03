@@ -35,7 +35,7 @@
             <!-- Navigation Links -->
             <div class="space-x-4">
                 <a href="{% url 'home' %}" class="hover:underline">Home</a>
-                <a href="#" class="hover:underline">Tournaments</a>
+                <a href="{% url 'user_tournaments' %}" class="hover:underline">Tournaments</a>
                 <a href="#" class="hover:underline">About</a>
                 
                 {% if user.is_authenticated %}

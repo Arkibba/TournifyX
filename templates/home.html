@@ -16,10 +16,16 @@
 </head>
 <body class="relative h-screen text-white">
 
-  <video
-  
-    id="introVideo"
+  <img
+    id="fallbackImage"
+    src="static/images/bg.jpeg"
+    alt="Background"
     class="absolute top-0 left-0 w-full h-full object-cover z-0"
+  />
+
+  <video
+    id="introVideo"
+    class="absolute top-0 left-0 w-full h-full object-cover z-0 hidden"
     autoplay
     muted
     playsinline
@@ -27,14 +33,6 @@
     <source src="static/videos/bg_vid.mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
-
-  <!-- Image fallback -->
-  <img
-    id="fallbackImage"
-    src="static/images/bg.jpeg"
-    alt="Background"
-    class="hidden absolute top-0 left-0 w-full h-full object-cover z-0"
-  >
 
   <!-- Navigation Bar -->
   <nav class="absolute top-0 left-0 w-full z-20 bg-black shadow-md">
@@ -114,8 +112,15 @@
     const hostBtn = document.getElementById('hostTournament');
     const joinBtn = document.getElementById('joinTournament');
 
+    // Show the video and hide the fallback image when the video is ready to play
+    video.addEventListener('canplay', () => {
+      fallbackImage.classList.add('hidden');
+      video.classList.remove('hidden');
+    });
+
+    // Show the fallback image if the video ends
     video.addEventListener('ended', () => {
-      video.style.display = 'none';
+      video.classList.add('hidden');
       fallbackImage.classList.remove('hidden');
     });
 
