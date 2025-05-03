@@ -174,7 +174,6 @@ def tournament_dashboard(request, tournament_id):
     else:  # League
         fixtures = generate_league_fixtures(participant_names)
 
-    print(f"Tournament Dashboard: {tournament.name}, Participants: {participant_names}, Fixtures: {fixtures}")
     return render(request, 'tournament_dashboard.html', {
         'tournament': tournament,
         'participants': participants,
@@ -232,8 +231,6 @@ def update_tournament(request, tournament_id):
                         name=name.strip(),
                         added_by=tournament.created_by
                     )
-
-            print(f"Tournament Updated: {tournament.name}, Participants: {player_names}")
             messages.success(request, f"Tournament '{tournament.name}' updated successfully!")
             return redirect('user_tournaments')
     else:
