@@ -34,22 +34,16 @@ class Tournament(models.Model):
         ('chess', 'Chess'),
     ]
 
-    MATCH_TYPE_CHOICES = [
-        ('knockout', 'Knockout'),
-        ('league', 'League'),
-    ]
-
     name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
+    description = models.TextField()
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='valorant')
+    num_participants = models.PositiveIntegerField()
+    match_type = models.CharField(max_length=10, choices=[('knockout', 'Knockout'), ('league', 'League')], default='knockout')
     created_by = models.ForeignKey(HostProfile, on_delete=models.CASCADE)
-    code = models.CharField(max_length=20, unique=True)
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
-    num_participants = models.PositiveIntegerField(default=4)
-    match_type = models.CharField(max_length=10, choices=MATCH_TYPE_CHOICES, default='knockout')
+    code = models.CharField(max_length=6, unique=True)
+    is_active = models.BooleanField(default=True)  # Add a default value
 
-    def _str_(self):
+    def __str__(self):
         return self.name
 
 

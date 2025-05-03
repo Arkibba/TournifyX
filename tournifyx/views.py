@@ -11,6 +11,7 @@ import random
 from .utils import generate_knockout_fixtures, generate_league_fixtures
 import itertools
 from django.http import HttpResponseForbidden
+from django.core.cache import cache
 
 def generate_knockout_fixtures(players):
     random.shuffle(players)
@@ -152,7 +153,7 @@ def join_tournament(request):
             code = form.cleaned_data['code']
             try:
                 # Fetch the tournament using the code
-                tournament = Tournament.objects.get(code=code)
+                tournament = Tournament.objects.get(code=code)  # Ensure this fetches the latest data
                 return redirect('tournament_dashboard', tournament_id=tournament.id)
             except Tournament.DoesNotExist:
                 # If the tournament code is invalid
@@ -173,9 +174,10 @@ def tournament_dashboard(request, tournament_id):
     else:  # League
         fixtures = generate_league_fixtures(participant_names)
 
+    print(f"Tournament Dashboard: {tournament.name}, Participants: {participant_names}, Fixtures: {fixtures}")
     return render(request, 'tournament_dashboard.html', {
         'tournament': tournament,
-        'participants': participants,  # Pass participants to the template
+        'participants': participants,
         'fixtures': fixtures,
     })
 
@@ -209,11 +211,36 @@ def update_tournament(request, tournament_id):
     if request.method == 'POST':
         form = TournamentForm(request.POST, instance=tournament)
         if form.is_valid():
+            # Save the tournament details
             form.save()
+
+            # Update participants
+            player_names = form.cleaned_data['players'].splitlines()
+            existing_players = Player.objects.filter(tournament=tournament)
+
+            # Remove players not in the updated list
+            existing_player_names = [player.name for player in existing_players]
+            for player in existing_players:
+                if player.name not in player_names:
+                    player.delete()
+
+            # Add new players
+            for name in player_names:
+                if name.strip() and name not in existing_player_names:
+                    Player.objects.create(
+                        tournament=tournament,
+                        name=name.strip(),
+                        added_by=tournament.created_by
+                    )
+
+            print(f"Tournament Updated: {tournament.name}, Participants: {player_names}")
             messages.success(request, f"Tournament '{tournament.name}' updated successfully!")
             return redirect('user_tournaments')
     else:
-        form = TournamentForm(instance=tournament)
+        # Prepopulate the players field with existing participant names
+        existing_players = Player.objects.filter(tournament=tournament)
+        player_names = "\n".join([player.name for player in existing_players])
+        form = TournamentForm(instance=tournament, initial={'players': player_names})
 
     return render(request, 'update_tournament.html', {'form': form, 'tournament': tournament})
 
