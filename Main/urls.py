@@ -28,4 +28,6 @@ urlpatterns = [
     path('host-tournament/', views.host_tournament, name='host_tournament'),
     path('join-tournament/', views.join_tournament, name='join_tournament'),
     path('tournament-dashboard/<int:tournament_id>/', views.tournament_dashboard, name='tournament_dashboard'),
+    path('user-tournaments/', views.user_tournaments, name='user_tournaments'),
+    path('update-tournament/<int:tournament_id>/', views.update_tournament, name='update_tournament'),
 ]

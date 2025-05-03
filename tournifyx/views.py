@@ -10,6 +10,7 @@ import string
 import random
 from .utils import generate_knockout_fixtures, generate_league_fixtures
 import itertools
+from django.http import HttpResponseForbidden
 
 def generate_knockout_fixtures(players):
     random.shuffle(players)
@@ -177,6 +178,44 @@ def tournament_dashboard(request, tournament_id):
         'participants': participants,  # Pass participants to the template
         'fixtures': fixtures,
     })
+
+
+@login_required(login_url='login')
+def user_tournaments(request):
+    try:
+        host_profile = HostProfile.objects.get(user=request.user)
+    except HostProfile.DoesNotExist:
+        return HttpResponseForbidden("You are not authorized to view this page.")
+
+    tournaments = Tournament.objects.filter(created_by=host_profile)
+
+    if request.method == 'POST':
+        tournament_id = request.POST.get('tournament_id')
+        action = request.POST.get('action')
+
+        if action == 'delete':
+            Tournament.objects.filter(id=tournament_id, created_by=host_profile).delete()
+        elif action == 'update':
+            # Redirect to a tournament update page (to be implemented)
+            return redirect('update_tournament', tournament_id=tournament_id)
+
+    return render(request, 'user_tournaments.html', {'tournaments': tournaments})
+
+
+@login_required(login_url='login')
+def update_tournament(request, tournament_id):
+    tournament = get_object_or_404(Tournament, id=tournament_id, created_by__user=request.user)
+
+    if request.method == 'POST':
+        form = TournamentForm(request.POST, instance=tournament)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Tournament '{tournament.name}' updated successfully!")
+            return redirect('user_tournaments')
+    else:
+        form = TournamentForm(instance=tournament)
+
+    return render(request, 'update_tournament.html', {'form': form, 'tournament': tournament})
 
 
 

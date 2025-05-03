@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}My Tournaments{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto mt-8 p-6 bg-white shadow-md rounded-lg text-black">
+    <h1 class="text-3xl font-bold mb-4">My Tournaments</h1>
+
+    {% if tournaments %}
+        <ul class="space-y-4">
+            {% for tournament in tournaments %}
+                <li class="p-4 bg-gray-100 rounded shadow">
+                    <h2 class="text-xl font-bold">{{ tournament.name }}</h2>
+                    <p>{{ tournament.description }}</p>
+                    <p><strong>Category:</strong> {{ tournament.get_category_display }}</p>
+                    <p><strong>Match Type:</strong> {{ tournament.get_match_type_display }}</p>
+                    <p><strong>Created At:</strong> {{ tournament.created_at }}</p>
+
+                    <form method="POST" class="mt-4 flex space-x-4">
+                        {% csrf_token %}
+                        <input type="hidden" name="tournament_id" value="{{ tournament.id }}">
+                        <button type="submit" name="action" value="update" class="px-4 py-2 bg-blue-500 text-white rounded">Update</button>
+                        <button type="submit" name="action" value="delete" class="px-4 py-2 bg-red-500 text-white rounded">Delete</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You have not created any tournaments yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Update Tournament{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto mt-8 p-6 bg-white shadow-md rounded-lg text-black">
+    <h1 class="text-3xl font-bold mb-4">Update Tournament</h1>
+    <form method="post" class="space-y-6">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Save Changes</button>
+    </form>
+</div>
+{% endblock %}

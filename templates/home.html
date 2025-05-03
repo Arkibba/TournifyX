@@ -17,6 +17,7 @@
 <body class="relative h-screen text-white">
 
   <video
+  
     id="introVideo"
     class="absolute top-0 left-0 w-full h-full object-cover z-0"
     autoplay
@@ -48,7 +49,7 @@
         </div>
         <div class="hidden md:flex space-x-6">
           <a href="#" class="text-gray-200 hover:text-white hover:underline">Home</a>
-          <a href="#" class="text-gray-200 hover:text-white hover:underline">Tournaments</a>
+          <a href="{% url 'user_tournaments' %}" class="text-gray-200 hover:text-white hover:underline">Tournaments</a>
           <a href="#" class="text-gray-200 hover:text-white hover:underline">About</a>
           <a href="#" class="text-gray-200 hover:text-white hover:underline">Contact</a>
           <!-- Add a button to trigger the modal -->
